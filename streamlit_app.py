@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 @st.cache
 def load_data():
     data = pd.read_csv('IMDB-Movie-Data.csv')
+    # Crear una nueva columna con el primer género listado
+    data['Primary Genre'] = data['Genre'].apply(lambda x: x.split(',')[0])
     return data
 
 data = load_data()
@@ -18,11 +20,11 @@ year_start, year_end = st.sidebar.slider('Selecciona el rango de años', year_mi
 # Filtrar datos
 filtered_data = data[(data['Year'] >= year_start) & (data['Year'] <= year_end)]
 
-# Gráfico de sectores para géneros
-st.header('Número de películas por género')
-genre_counts = filtered_data['Genre'].value_counts()
+# Gráfico de sectores para géneros primarios
+st.header('Número de películas por género primario')
+primary_genre_counts = filtered_data['Primary Genre'].value_counts()
 fig1, ax1 = plt.subplots()
-ax1.pie(genre_counts, labels=genre_counts.index, autopct='%1.1f%%', startangle=90)
+ax1.pie(primary_genre_counts, labels=primary_genre_counts.index, autopct='%1.1f%%', startangle=90)
 ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 st.pyplot(fig1)
 
@@ -40,3 +42,4 @@ st.pyplot(fig2)
 st.header('Top 5 películas con mayor facturación')
 top_movies = filtered_data.nlargest(5, 'Revenue (Millions)')
 st.write(top_movies[['Title', 'Year', 'Revenue (Millions)']])
+
